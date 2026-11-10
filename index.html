@@ -3,116 +3,309 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#eef5ef">
-  <title>Mint Day — Daily Planner</title>
+  <meta name="theme-color" content="#227c4d">
+  <title>Mint Day · Kim Oanh — Kế hoạch & Tập trung</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="app-shell">
-    <header class="topbar">
-      <a class="brand" href="#" aria-label="Mint Day"><span class="brand-mark">✿</span><span>mint day</span></a>
-      <div class="top-actions">
-        <span class="today-label" id="todayLabel"></span>
-        <button class="icon-btn" id="exportBtn" title="Xuất bản sao dữ liệu" aria-label="Xuất dữ liệu">↥</button>
-        <button class="icon-btn" id="importBtn" title="Nhập bản sao dữ liệu" aria-label="Nhập dữ liệu">↧</button>
+  <!-- Top Navigation Bar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand">
+        <span class="brand-badge">🌿</span>
+        <div class="brand-info">
+          <span class="brand-title">Mint Day</span>
+          <span class="brand-author">Kim Oanh's Space</span>
+        </div>
+      </div>
+      <div class="pill-badge date-pill">
+        <span class="pill-icon">📅</span>
+        <span id="headerDate">Đang tải ngày...</span>
+      </div>
+    </div>
+
+    <div class="topbar-center">
+      <div class="pill-badge summary-pill">
+        <span class="pill-icon">✨</span>
+        <span id="headerSummary">0/0 việc · 0m tập trung</span>
+      </div>
+      <div class="pill-badge sync-pill" id="syncStatusPill" title="Trạng thái dữ liệu">
+        <span class="sync-dot"></span>
+        <span id="syncStatusText">Lịch trình Kim Oanh</span>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <button class="btn btn-outline" id="openSyncModalBtn" title="Đồng bộ lịch trình lên Web">
+        <span>☁️</span> <span>Đồng bộ Web</span>
+      </button>
+      <div class="btn-group">
+        <button class="btn btn-icon" id="exportBtn" title="Tải file sao lưu (JSON)" aria-label="Tải sao lưu">↥</button>
+        <button class="btn btn-icon" id="importBtn" title="Nhập bản sao lưu (JSON)" aria-label="Nhập sao lưu">↧</button>
         <input type="file" id="importFile" accept="application/json,.json" hidden>
       </div>
-    </header>
+      <button class="btn btn-primary" id="openAddBtn">
+        <span>＋</span> <span>Thêm việc</span>
+      </button>
+    </div>
+  </header>
 
-    <section class="welcome">
-      <div>
-        <p class="eyebrow">YOUR PERSONAL DAILY SPACE</p>
-        <h1>A softer way to <em>get things done.</em></h1>
-        <p class="subheading">Chậm một chút cũng được. Quan trọng là mình vẫn tiến lên.</p>
+  <!-- 3-Column Zero-Scroll Dashboard Grid -->
+  <main class="dashboard-grid">
+    <!-- CỘT 1: Checklist Công Việc -->
+    <section class="panel tasks-panel" aria-label="Danh sách công việc">
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <h2 id="taskPanelTitle">Kế hoạch hôm nay</h2>
+          <span class="count-badge" id="taskCountBadge">0</span>
+        </div>
+        <div class="filter-group" id="filterGroup">
+          <button class="filter-btn active" data-filter="all">Tất cả</button>
+          <button class="filter-btn" data-filter="active">Chưa xong</button>
+          <button class="filter-btn" data-filter="done">Đã xong</button>
+        </div>
       </div>
-      <div class="date-chip"><span>☁</span><span id="dateChip"></span></div>
-    </section>
 
-    <section class="overview">
-      <article class="stat-card progress-card">
-        <div class="stat-top"><div><p class="card-kicker">TODAY'S PROGRESS</p><h2><span id="doneCount">0</span><small> / <span id="totalCount">0</span> tasks completed</small></h2></div><span class="stat-icon">✿</span></div>
-        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-        <p class="stat-note" id="progressNote">Bắt đầu bằng một việc nhỏ nhé.</p>
-      </article>
-      <article class="stat-card focus-card">
-        <p class="card-kicker">FOCUS TIME TODAY</p>
-        <div class="focus-total"><span id="focusMinutes">0</span><small>minutes</small></div>
-        <p class="stat-note">Tổng thời gian timer đã hoàn thành</p>
-        <span class="focus-decoration">◌</span>
-      </article>
-    </section>
-
-    <section class="workspace">
-      <section class="tasks-panel panel">
-        <div class="section-heading">
-          <div><p class="eyebrow">YOUR CHECKLIST</p><h2 id="taskHeading">Today's tasks <span class="heading-flower">✿</span></h2><p class="section-description" id="taskDescription">Chọn một việc để bắt đầu đếm giờ.</p></div>
-          <button class="primary-btn" id="openAdd">＋ Add task</button>
+      <!-- Mini Progress Strip -->
+      <div class="progress-box">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="taskProgressFill"></div>
         </div>
-        <div class="filters" id="filters">
-          <button class="filter active" data-filter="all">All <span id="allFilterCount">0</span></button>
-          <button class="filter" data-filter="active">To do</button>
-          <button class="filter" data-filter="done">Completed</button>
+        <div class="progress-labels">
+          <span id="progressNote">Bắt đầu bằng một việc nhỏ nhé</span>
+          <strong id="progressPercent">0%</strong>
         </div>
-        <div id="taskList" class="task-list"></div>
-        <div class="empty-state" id="emptyState">
-          <div class="empty-illustration">☘</div>
-          <h3>Chưa có task nào</h3>
-          <p>Thêm việc đầu tiên để tạo checklist hằng ngày của bạn.</p>
-          <button class="soft-btn" id="emptyAdd">＋ Create your first task</button>
-        </div>
-        <div class="history-readonly" id="historyReadonly" hidden>Đây là dữ liệu lịch sử. Chuyển về hôm nay để chỉnh sửa task.</div>
-      </section>
-
-      <aside class="timer-panel panel">
-        <div class="timer-top"><p class="eyebrow">FOCUS TIMER</p><span class="live-dot">● READY</span></div>
-        <h2 id="timerTaskName">Choose a task</h2>
-        <p class="timer-hint" id="timerHint">Chọn một task bên trái để bắt đầu.</p>
-        <div class="timer-ring">
-          <svg viewBox="0 0 220 220" aria-hidden="true"><circle class="ring-bg" cx="110" cy="110" r="96"></circle><circle class="ring-progress" id="ringProgress" cx="110" cy="110" r="96"></circle></svg>
-          <div class="timer-readout"><strong id="timerDisplay">00:00</strong><span id="timerStatus">READY WHEN YOU ARE</span></div>
-        </div>
-        <div class="timer-actions"><button class="timer-main" id="startPauseBtn" disabled>▶ Start</button><button class="timer-reset" id="resetTimerBtn" disabled title="Đặt lại timer">↺</button></div>
-        <p class="timer-footnote">Khi hết giờ, task sẽ tự động được đánh dấu hoàn thành.</p>
-        <div class="timer-tip"><span>✧</span><p>Không cần hoàn hảo. Chỉ cần bắt đầu.</p></div>
-      </aside>
-    </section>
-
-    <section class="history-panel panel">
-      <div class="section-heading history-heading">
-        <div><p class="eyebrow">LOOK BACK, FEEL PROUD</p><h2>Daily history <span class="heading-flower">✿</span></h2><p class="section-description">Lịch sử được lưu riêng theo từng ngày trên thiết bị này.</p></div>
-        <div class="month-controls"><button class="month-btn" id="prevMonth" aria-label="Tháng trước">‹</button><strong id="monthLabel"></strong><button class="month-btn" id="nextMonth" aria-label="Tháng sau">›</button></div>
       </div>
-      <div class="history-layout">
-        <div class="calendar-wrap">
-          <div class="calendar" id="calendar"></div>
-          <div class="calendar-legend"><span><i class="legend-dot has-data"></i> Có dữ liệu</span><span><i class="legend-dot selected-dot"></i> Đang chọn</span></div>
+
+      <!-- Banner if viewing history date -->
+      <div class="history-banner" id="historyBanner" hidden>
+        <span>📜 Xem ngày <strong id="historyBannerDate">--</strong></span>
+        <button class="btn-text-action" id="returnTodayBtn">Quay về hôm nay</button>
+      </div>
+
+      <!-- Scrollable Task List -->
+      <div class="task-list-scroll" id="taskListScroll">
+        <div class="task-list" id="taskList"></div>
+        <div class="empty-placeholder" id="emptyState" style="display: none;">
+          <div class="empty-icon">🌱</div>
+          <h3>Chưa có mục nào</h3>
+          <p>Thêm việc cần làm hôm nay để bắt đầu ngày mới!</p>
+          <button class="btn btn-soft" id="emptyAddBtn">＋ Thêm việc mới</button>
         </div>
-        <div class="day-detail" id="dayDetail">
-          <div class="detail-date" id="detailDate">Today</div>
-          <div class="detail-stats">
-            <div><strong id="historyDone">0/0</strong><span>Tasks done</span></div>
-            <div><strong id="historyFocus">0 min</strong><span>Focus time</span></div>
-            <div><strong id="historyRate">0%</strong><span>Completion</span></div>
+      </div>
+    </section>
+
+    <!-- CỘT 2: Đồng Hồ Tập Trung Focus Timer -->
+    <section class="panel timer-panel" aria-label="Đồng hồ tập trung">
+      <div class="panel-header center-header">
+        <div class="panel-title-wrap">
+          <h2>Đồng hồ tập trung</h2>
+        </div>
+        <span class="timer-mode-tag" id="timerModeTag">SẴN SÀNG</span>
+      </div>
+
+      <!-- Selected Task Box -->
+      <div class="active-task-card" id="activeTaskCard">
+        <span class="active-task-eyebrow">MỤC TIÊU ĐANG CHỌN</span>
+        <h3 id="timerTaskName">Chọn một việc ở bên trái</h3>
+        <div class="active-task-meta" id="timerTaskMeta">
+          <span class="meta-tag" id="timerCategoryTag">--</span>
+          <span class="meta-tag duration-tag" id="timerDurationTag">0 phút</span>
+        </div>
+      </div>
+
+      <!-- SVG Ring Countdown Timer -->
+      <div class="dial-wrapper">
+        <div class="timer-dial">
+          <svg viewBox="0 0 220 220" aria-hidden="true">
+            <circle class="ring-track" cx="110" cy="110" r="95"></circle>
+            <circle class="ring-fill" id="ringFill" cx="110" cy="110" r="95"></circle>
+          </svg>
+          <div class="dial-center">
+            <strong class="dial-digits" id="timerDisplay">00:00</strong>
+            <span class="dial-caption" id="timerStatusCaption">CHỌN VIỆC ĐỂ FOCUS</span>
           </div>
-          <div class="detail-divider"></div>
-          <p class="detail-label">TASKS ON THIS DAY</p>
-          <div class="history-task-list" id="historyTaskList"></div>
         </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="timer-controls">
+        <button class="btn btn-timer-main" id="startPauseBtn" disabled>
+          <span id="startPauseIcon">▶</span>
+          <span id="startPauseText">Bắt đầu</span>
+        </button>
+        <button class="btn btn-timer-sub" id="resetTimerBtn" disabled title="Đặt lại đồng hồ">↺</button>
+      </div>
+
+      <!-- Today Focus Stats -->
+      <div class="focus-summary-grid">
+        <div class="focus-kpi">
+          <strong id="statDoneCount">0</strong>
+          <span>Đã xong</span>
+        </div>
+        <div class="focus-kpi-divider"></div>
+        <div class="focus-kpi">
+          <strong id="statFocusTime">0m</strong>
+          <span>Tập trung</span>
+        </div>
+        <div class="focus-kpi-divider"></div>
+        <div class="focus-kpi">
+          <strong id="statProductivity">0%</strong>
+          <span>Hiệu suất</span>
+        </div>
+      </div>
+
+      <!-- Gentle Quote -->
+      <div class="motivation-quote">
+        <span class="quote-sparkle">✧</span>
+        <span id="quoteText">Làm từng việc nhỏ một cách trọn vẹn.</span>
       </div>
     </section>
 
-    <footer>made with <span>♥</span> and a little mint <span class="footer-separator">·</span> Data stays in this browser</footer>
+    <!-- CỘT 3: Lịch Tháng & Nhật Ký Lịch Sử -->
+    <section class="panel calendar-panel" aria-label="Lịch và lịch sử">
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <h2>Lịch & Lịch sử</h2>
+        </div>
+        <div class="calendar-nav">
+          <button class="btn-cal-arrow" id="prevMonthBtn" title="Tháng trước">‹</button>
+          <strong class="month-title" id="monthLabel">Tháng --</strong>
+          <button class="btn-cal-arrow" id="nextMonthBtn" title="Tháng sau">›</button>
+        </div>
+      </div>
+
+      <!-- Mini Calendar -->
+      <div class="calendar-card">
+        <div class="calendar-grid" id="calendarGrid"></div>
+        <div class="calendar-legend">
+          <span><i class="dot dot-data"></i> Có dữ liệu</span>
+          <span><i class="dot dot-selected"></i> Đang chọn</span>
+          <span><i class="dot dot-today"></i> Hôm nay</span>
+        </div>
+      </div>
+
+      <!-- Detail Card for Selected Date -->
+      <div class="history-detail-card">
+        <div class="detail-header-row">
+          <div class="detail-title-group">
+            <strong class="detail-date-text" id="detailDateText">Hôm nay</strong>
+          </div>
+          <span class="detail-rate-badge" id="detailRateBadge">0% xong</span>
+        </div>
+
+        <div class="detail-stats-row">
+          <div class="detail-stat-box">
+            <strong id="detailDoneText">0/0</strong>
+            <span>Việc xong</span>
+          </div>
+          <div class="detail-stat-box">
+            <strong id="detailFocusText">0m</strong>
+            <span>Tập trung</span>
+          </div>
+          <div class="detail-stat-box">
+            <strong id="detailRateText">0%</strong>
+            <span>Tỉ lệ</span>
+          </div>
+        </div>
+
+        <div class="history-tasks-section">
+          <span class="history-section-label">NHẬT KÝ CÔNG VIỆC</span>
+          <div class="history-tasks-scroll" id="historyTasksScroll"></div>
+        </div>
+      </div>
+    </section>
   </main>
 
+  <!-- Dialog: Thêm / Sửa Task -->
   <dialog id="taskDialog">
-    <form id="taskForm">
-      <div class="dialog-heading"><div><p class="eyebrow">MAKE IT HAPPEN</p><h2 id="dialogTitle">Add a task</h2></div><button type="button" class="close-btn" id="closeDialog">×</button></div>
-      <label for="taskName">Task name</label><input id="taskName" maxlength="100" placeholder="e.g. Brush my teeth" required>
-      <div class="form-row"><div><label for="taskMinutes">Duration (minutes)</label><input id="taskMinutes" type="number" min="1" max="1440" value="5" required></div><div><label for="taskCategory">Category</label><select id="taskCategory"><option>Morning</option><option>Afternoon</option><option>Evening</option><option>Study</option><option>Personal</option><option>Other</option></select></div></div>
-      <div class="dialog-actions"><button type="button" class="soft-btn" id="cancelDialog">Cancel</button><button class="primary-btn" type="submit">Save task</button></div>
+    <form id="taskForm" method="dialog">
+      <div class="dialog-header">
+        <h2 id="dialogTitle">Thêm công việc</h2>
+        <button type="button" class="btn-close" id="closeDialogBtn" aria-label="Đóng">✕</button>
+      </div>
+
+      <div class="dialog-body">
+        <div class="form-group">
+          <label for="taskName">Tên việc cần làm</label>
+          <input type="text" id="taskName" maxlength="120" placeholder="VD: Đọc sách, làm bài tập..." required autocomplete="off">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="taskMinutes">Thời gian (phút)</label>
+            <input type="number" id="taskMinutes" min="1" max="1440" value="25" required>
+          </div>
+          <div class="form-group">
+            <label for="taskCategory">Phân loại</label>
+            <select id="taskCategory">
+              <option value="Học tập">Học tập</option>
+              <option value="Công việc">Công việc</option>
+              <option value="Cá nhân">Cá nhân</option>
+              <option value="Sáng">Buổi sáng</option>
+              <option value="Chiều">Buổi chiều</option>
+              <option value="Tối">Buổi tối</option>
+              <option value="Khác">Khác</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="dialog-footer">
+        <button type="button" class="btn btn-outline" id="cancelDialogBtn">Hủy</button>
+        <button type="submit" class="btn btn-primary" id="saveTaskBtn">Lưu công việc</button>
+      </div>
     </form>
   </dialog>
+
+  <!-- Dialog: Đồng Bộ Web & GitHub -->
+  <dialog id="syncDialog">
+    <div class="sync-dialog-wrap">
+      <div class="dialog-header">
+        <div>
+          <h2>Đồng bộ Lịch trình Web</h2>
+          <p class="dialog-sub">Chia sẻ & cập nhật lịch trình của Kim Oanh</p>
+        </div>
+        <button type="button" class="btn-close" id="closeSyncBtn" aria-label="Đóng">✕</button>
+      </div>
+
+      <div class="sync-info-box">
+        <div class="sync-info-item">
+          <span class="info-label">Link Web công khai:</span>
+          <a class="info-link" id="publicWebLink" href="https://oanhkim-tmd.github.io/mint-day-kimoanh/" target="_blank" rel="noopener">
+            https://oanhkim-tmd.github.io/mint-day-kimoanh/
+          </a>
+        </div>
+        <p class="info-note">Bất kỳ ai mở link này trên điện thoại hay máy tính đều xem được lịch trình và lịch sử của bạn!</p>
+      </div>
+
+      <div class="sync-section">
+        <h3>🚀 Cập nhật lên Web (Dành riêng cho Kim Oanh)</h3>
+        <p class="section-desc">Nhập GitHub Token (chỉ lưu trong máy bạn) để tự động cập nhật lên web chỉ với 1 click:</p>
+        <div class="token-input-row">
+          <input type="password" id="githubTokenInput" placeholder="ghp_xxxx (GitHub Personal Access Token)" autocomplete="off">
+          <button class="btn btn-primary" id="publishToGitHubBtn">Lưu & Xuất bản</button>
+        </div>
+        <span class="token-status-note" id="tokenStatusNote"></span>
+      </div>
+
+      <div class="sync-section">
+        <h3>📥 Tải file dữ liệu</h3>
+        <p class="section-desc">Hoặc tải file <code>data.json</code> về máy để lưu trữ hoặc commit bằng git:</p>
+        <div class="sync-actions-row">
+          <button class="btn btn-outline" id="downloadDataJsonBtn">Tải file data.json</button>
+          <button class="btn btn-soft" id="reloadFromCloudBtn">Tải lại từ Web</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Notification Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
   <script src="app.js"></script>
 </body>
 </html>
