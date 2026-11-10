@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e9f4ec">
+  <title>Mint Day — Daily Planner</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Mint Day home"><span class="brand-mark">✿</span><span>mint day</span></a>
+      <div class="top-actions">
+        <span class="today-label" id="todayLabel"></span>
+        <button class="icon-btn" id="exportBtn" title="Xuất dữ liệu" aria-label="Xuất dữ liệu">↥</button>
+        <button class="icon-btn" id="importBtn" title="Nhập dữ liệu" aria-label="Nhập dữ liệu">↧</button>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+      </div>
+    </header>
+
+    <section class="welcome">
+      <div>
+        <p class="eyebrow">YOUR LITTLE DAILY SPACE</p>
+        <h1>Make today <em>count.</em> <span class="sparkle">✧</span></h1>
+        <p class="subheading">Từng việc nhỏ, từng bước tiến lớn.</p>
+      </div>
+      <div class="date-chip"><span>☁</span><span id="dateChip"></span></div>
+    </section>
+
+    <section class="overview">
+      <div class="progress-card">
+        <div class="progress-head">
+          <div><p class="card-kicker">DAILY PROGRESS</p><h2><span id="doneCount">0</span><small> / <span id="totalCount">0</span> tasks done</small></h2></div>
+          <div class="progress-flower">❀</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <p class="progress-note" id="progressNote">Bắt đầu bằng một việc nhỏ nhé 🌱</p>
+      </div>
+      <div class="focus-card">
+        <p class="card-kicker">FOCUS TIME TODAY</p>
+        <div class="focus-total"><span id="focusMinutes">0</span><small> min</small></div>
+        <p class="focus-note">Thời gian đã hoàn thành</p>
+        <span class="focus-deco">◌</span>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="tasks-panel">
+        <div class="section-heading">
+          <div><p class="eyebrow">YOUR CHECKLIST</p><h2>Today's tasks <span class="tiny-flower">✿</span></h2></div>
+          <button class="primary-btn" id="openAdd">＋ Add a task</button>
+        </div>
+        <div class="filters" id="filters">
+          <button class="filter active" data-filter="all">All tasks <span id="allFilterCount">0</span></button>
+          <button class="filter" data-filter="active">To do</button>
+          <button class="filter" data-filter="done">Completed</button>
+        </div>
+        <div id="taskList" class="task-list"></div>
+        <div class="empty-state" id="emptyState">
+          <div class="empty-illustration">☘</div>
+          <h3>Ngày mới, trang giấy mới!</h3>
+          <p>Thêm task đầu tiên và bắt đầu routine của bạn.</p>
+          <button class="soft-btn" id="emptyAdd">＋ Create your first task</button>
+        </div>
+      </div>
+
+      <aside class="timer-panel">
+        <div class="timer-top"><p class="eyebrow">A LITTLE FOCUS</p><span class="live-dot">● READY</span></div>
+        <h2 id="timerTaskName">Choose a task</h2>
+        <p class="timer-hint" id="timerHint">Chọn một task bên trái để bắt đầu tập trung.</p>
+        <div class="timer-ring" id="timerRing">
+          <svg viewBox="0 0 220 220" aria-hidden="true">
+            <circle class="ring-bg" cx="110" cy="110" r="96"></circle>
+            <circle class="ring-progress" id="ringProgress" cx="110" cy="110" r="96"></circle>
+          </svg>
+          <div class="timer-readout"><strong id="timerDisplay">00:00</strong><span id="timerStatus">READY WHEN YOU ARE</span></div>
+        </div>
+        <div class="timer-actions">
+          <button class="timer-main" id="startPauseBtn" disabled>▶ Start</button>
+          <button class="timer-reset" id="resetTimerBtn" disabled title="Đặt lại">↺</button>
+        </div>
+        <p class="timer-footnote">Hết giờ, task sẽ tự động được đánh dấu hoàn thành.</p>
+        <div class="timer-tip"><span>✧</span><p>Không cần hoàn hảo. Chỉ cần bắt đầu.</p></div>
+      </aside>
+    </section>
+
+    <footer>made with <span>♥</span> and a little mint · Your data stays on this device</footer>
+  </main>
+
+  <dialog id="taskDialog">
+    <form id="taskForm" method="dialog">
+      <div class="dialog-heading"><div><p class="eyebrow">MAKE IT HAPPEN</p><h2 id="dialogTitle">Add a little task</h2></div><button type="button" class="close-btn" id="closeDialog">×</button></div>
+      <label for="taskName">Task name</label>
+      <input id="taskName" name="taskName" maxlength="100" placeholder="e.g. Brush my teeth" required>
+      <div class="form-row">
+        <div><label for="taskMinutes">Duration (minutes)</label><input id="taskMinutes" name="taskMinutes" type="number" min="1" max="1440" value="5" required></div>
+        <div><label for="taskCategory">Category</label><select id="taskCategory" name="taskCategory"><option>Morning</option><option>Afternoon</option><option>Evening</option><option>Study</option><option>Personal</option><option>Other</option></select></div>
+      </div>
+      <div class="dialog-actions"><button type="button" class="soft-btn" id="cancelDialog">Cancel</button><button class="primary-btn" type="submit">Save task</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
