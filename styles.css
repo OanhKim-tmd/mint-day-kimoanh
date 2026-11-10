@@ -489,6 +489,17 @@ body {
   font-weight: 700;
 }
 
+.repeat-chip {
+  padding: 1px 7px;
+  border-radius: 5px;
+  background: #edf4fb;
+  color: #1e5ba6;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
 .duration-chip {
   color: var(--ink-muted);
   font-weight: 600;

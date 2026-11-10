@@ -96,6 +96,13 @@
     }
   }
 
+  function getRepeatLabel(repeat) {
+    if (repeat === "daily") return "🔁 Hàng ngày";
+    if (repeat === "weekly") return "📅 Hàng tuần";
+    if (repeat === "monthly") return "🗓️ Hàng tháng";
+    return "";
+  }
+
   // Save current state into local storage & history snapshot
   function snapshot(targetDate = state.date) {
     if (!state.history) state.history = {};
@@ -105,6 +112,7 @@
         name: t.name,
         minutes: t.minutes,
         category: t.category,
+        repeat: t.repeat || "none",
         done: !!t.done,
         completedAt: t.completedAt || null
       })),
@@ -130,8 +138,14 @@
 
     snapshot(state.date);
     state.date = today;
-    // Keep recurring tasks but reset completion for the new day
-    state.tasks = state.tasks.map(t => ({ ...t, done: false, completedAt: null }));
+
+    // Recurring tasks persist and reset to undone for the new day
+    // Non-recurring tasks that were completed are archived in yesterday's history
+    // Non-recurring tasks that were NOT completed rollover so user can finish them
+    state.tasks = state.tasks
+      .filter(t => (t.repeat && t.repeat !== "none") || !t.done)
+      .map(t => ({ ...t, done: false, completedAt: null }));
+
     state.active = null;
     state.elapsedToday = 0;
     selectedId = null;
@@ -281,7 +295,9 @@
       if (visible.length === 0) {
         listEl.innerHTML = '<div class="history-empty-text">Không có công việc nào trong mục lọc này.</div>';
       } else {
-        listEl.innerHTML = visible.map(t => `
+        listEl.innerHTML = visible.map(t => {
+          const repeatLabel = getRepeatLabel(t.repeat);
+          return `
           <div class="task-card ${t.done ? "completed" : ""} ${today && selectedId === t.id ? "active-selected" : ""}" data-id="${escapeHtml(t.id)}">
             <button class="check-trigger" data-action="toggle" title="${t.done ? "Bỏ hoàn thành" : "Đánh dấu hoàn thành"}">
               ${t.done ? "✓" : ""}
@@ -290,6 +306,7 @@
               <div class="task-text">${escapeHtml(t.name)}</div>
               <div class="task-meta-row">
                 <span class="category-chip">${escapeHtml(t.category || "Học tập")}</span>
+                ${repeatLabel ? `<span class="repeat-chip">${repeatLabel}</span>` : ""}
                 <span class="duration-chip">⏱ ${t.minutes} phút</span>
               </div>
             </div>
@@ -299,7 +316,7 @@
               <button class="task-tool-btn" data-action="delete" title="Xóa">✕</button>
             </div>` : ""}
           </div>
-        `).join("");
+        `;}).join("");
       }
     }
   }
@@ -324,8 +341,9 @@
       return;
     }
 
+    const repeatLabel = getRepeatLabel(task.repeat);
     $("timerTaskName").textContent = task.name;
-    $("timerCategoryTag").textContent = task.category || "Chung";
+    $("timerCategoryTag").textContent = `${task.category || "Chung"}${repeatLabel ? " · " + repeatLabel : ""}`;
     $("timerDurationTag").textContent = `${task.minutes} phút`;
 
     const doneCount = state.tasks.filter(t => t.done).length;
@@ -531,12 +549,14 @@
     $("detailRateText").textContent = `${rate}%`;
     $("detailRateBadge").textContent = `${rate}% xong`;
 
-    $("historyTasksScroll").innerHTML = tasks.map(t => `
+    $("historyTasksScroll").innerHTML = tasks.map(t => {
+      const repeatLabel = getRepeatLabel(t.repeat);
+      return `
       <div class="history-task-row">
-        <span class="history-task-name">${escapeHtml(t.name)} · ${t.minutes}m</span>
+        <span class="history-task-name">${escapeHtml(t.name)} ${repeatLabel ? `(${repeatLabel})` : ""} · ${t.minutes}m</span>
         <span class="history-task-badge ${t.done ? "done" : "pending"}">${t.done ? "✓ Xong" : "Chưa"}</span>
       </div>
-    `).join("");
+    `;}).join("");
   }
 
   // ==========================================================
@@ -549,6 +569,7 @@
     $("taskName").value = task ? task.name : "";
     $("taskMinutes").value = task ? task.minutes : 25;
     $("taskCategory").value = task ? task.category : "Học tập";
+    $("taskRepeat").value = task ? (task.repeat || "none") : "none";
     $("taskDialog").showModal();
     $("taskName").focus();
   }
@@ -640,6 +661,7 @@
     const name = $("taskName").value.trim();
     const minutes = parseInt($("taskMinutes").value, 10);
     const category = $("taskCategory").value;
+    const repeat = $("taskRepeat").value || "none";
 
     if (!name || isNaN(minutes) || minutes < 1 || minutes > 1440) {
       showToast("Vui lòng nhập tên việc và thời lượng hợp lệ.");
@@ -653,6 +675,7 @@
         t.name = name;
         t.minutes = minutes;
         t.category = category;
+        t.repeat = repeat;
         showToast("Đã cập nhật công việc.");
       }
     } else {
@@ -661,6 +684,7 @@
         name,
         minutes,
         category,
+        repeat,
         done: false,
         completedAt: null
       };
