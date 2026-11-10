@@ -1,32 +1,31 @@
-# Mint Day — Daily Planner
+# Mint Day v2 — Daily Planner + History
 
-A small, free, static daily checklist with per-task countdown timers.
+A free static daily planner with task countdown timers and per-day history.
 
 ## Run locally
-Open `index.html` in a modern browser. No installation, server, account, or API key is required.
+Open `index.html` in a modern browser. No install, backend, account, or API key is required.
 
-## Publish free with GitHub Pages
-1. Create a GitHub repository, for example `mint-day`.
-2. Upload `index.html`, `styles.css`, and `app.js` to the repository root.
-3. Open **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Select branch `main` and folder `/ (root)`, then Save.
-6. Wait for GitHub Pages to publish. Your URL will look like `https://YOUR-USERNAME.github.io/mint-day/`.
+## Publish on GitHub Pages
+1. Replace the existing `index.html`, `styles.css`, and `app.js` in the root of your `Mint-Day` repository with these files.
+2. Commit and push to `main`.
+3. In GitHub, open **Settings → Pages** and keep `main` + `/(root)`.
+4. Wait for the Pages deployment to finish.
 
 ## Features
-- Add as many tasks as you need; edit and delete them.
-- Each task has a name, duration (1–1440 minutes), and category.
-- Select a task, start/pause/resume/reset its countdown.
+- Unlimited tasks, edit/delete, category and duration per task.
+- Per-task Start / Pause / Resume / Reset countdown.
 - Timer completion automatically marks the task complete.
-- Manually mark tasks complete and filter All / To do / Completed.
+- Manual completion and All / To do / Completed filters.
 - Daily progress and completed focus time.
-- Checklist resets its completion state on the next local calendar day; task definitions remain.
-- Export/import a JSON backup.
-- Responsive mint-and-cream interface.
+- Calendar with per-day snapshots and history detail (tasks, completion ratio, focus time).
+- Each new local day archives the previous checklist, then resets task completion for the new day.
+- Export/import JSON backup including history.
+- Responsive mint-and-cream UI.
 
-## Storage and limitations
-- All data is stored in this browser's `localStorage` on this device. It is not synced across devices or browsers.
-- Clearing browser data can erase the checklist. Use Export periodically to keep a backup.
-- The app has no backend and no hosting fee on GitHub Pages.
-- A browser tab is not guaranteed to execute JavaScript continuously while the computer is asleep or the browser is fully closed. The timer uses timestamps, so when you return it catches up and completes an expired task.
-- Google Fonts is an optional external font; the app still works if it cannot load.
+## Data and important limitations
+- Data is stored in this browser's localStorage on this device. It does not sync between devices or browsers.
+- The app snapshots today's data every 15 seconds and before page unload. It also archives the previous date before resetting when it detects a new day.
+- If the browser's site data is cleared, data can be lost. Use Export regularly to keep a backup.
+- A static GitHub Pages site does not provide cloud database storage. Cross-device sync requires adding a backend/database later.
+- The countdown is timestamp-based. If the computer sleeps or the browser is closed, the display will not update in real time, but on return the timer catches up and marks an expired task complete.
+- Google Fonts is optional; the app remains usable if the font service is unavailable.

@@ -3,100 +3,112 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#e9f4ec">
+  <meta name="theme-color" content="#eef5ef">
   <title>Mint Day — Daily Planner</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main class="app-shell">
     <header class="topbar">
-      <a class="brand" href="#" aria-label="Mint Day home"><span class="brand-mark">✿</span><span>mint day</span></a>
+      <a class="brand" href="#" aria-label="Mint Day"><span class="brand-mark">✿</span><span>mint day</span></a>
       <div class="top-actions">
         <span class="today-label" id="todayLabel"></span>
-        <button class="icon-btn" id="exportBtn" title="Xuất dữ liệu" aria-label="Xuất dữ liệu">↥</button>
-        <button class="icon-btn" id="importBtn" title="Nhập dữ liệu" aria-label="Nhập dữ liệu">↧</button>
+        <button class="icon-btn" id="exportBtn" title="Xuất bản sao dữ liệu" aria-label="Xuất dữ liệu">↥</button>
+        <button class="icon-btn" id="importBtn" title="Nhập bản sao dữ liệu" aria-label="Nhập dữ liệu">↧</button>
         <input type="file" id="importFile" accept="application/json,.json" hidden>
       </div>
     </header>
 
     <section class="welcome">
       <div>
-        <p class="eyebrow">YOUR LITTLE DAILY SPACE</p>
-        <h1>Make today <em>count.</em> <span class="sparkle">✧</span></h1>
-        <p class="subheading">Từng việc nhỏ, từng bước tiến lớn.</p>
+        <p class="eyebrow">YOUR PERSONAL DAILY SPACE</p>
+        <h1>A softer way to <em>get things done.</em></h1>
+        <p class="subheading">Chậm một chút cũng được. Quan trọng là mình vẫn tiến lên.</p>
       </div>
       <div class="date-chip"><span>☁</span><span id="dateChip"></span></div>
     </section>
 
     <section class="overview">
-      <div class="progress-card">
-        <div class="progress-head">
-          <div><p class="card-kicker">DAILY PROGRESS</p><h2><span id="doneCount">0</span><small> / <span id="totalCount">0</span> tasks done</small></h2></div>
-          <div class="progress-flower">❀</div>
-        </div>
+      <article class="stat-card progress-card">
+        <div class="stat-top"><div><p class="card-kicker">TODAY'S PROGRESS</p><h2><span id="doneCount">0</span><small> / <span id="totalCount">0</span> tasks completed</small></h2></div><span class="stat-icon">✿</span></div>
         <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-        <p class="progress-note" id="progressNote">Bắt đầu bằng một việc nhỏ nhé 🌱</p>
-      </div>
-      <div class="focus-card">
+        <p class="stat-note" id="progressNote">Bắt đầu bằng một việc nhỏ nhé.</p>
+      </article>
+      <article class="stat-card focus-card">
         <p class="card-kicker">FOCUS TIME TODAY</p>
-        <div class="focus-total"><span id="focusMinutes">0</span><small> min</small></div>
-        <p class="focus-note">Thời gian đã hoàn thành</p>
-        <span class="focus-deco">◌</span>
-      </div>
+        <div class="focus-total"><span id="focusMinutes">0</span><small>minutes</small></div>
+        <p class="stat-note">Tổng thời gian timer đã hoàn thành</p>
+        <span class="focus-decoration">◌</span>
+      </article>
     </section>
 
     <section class="workspace">
-      <div class="tasks-panel">
+      <section class="tasks-panel panel">
         <div class="section-heading">
-          <div><p class="eyebrow">YOUR CHECKLIST</p><h2>Today's tasks <span class="tiny-flower">✿</span></h2></div>
-          <button class="primary-btn" id="openAdd">＋ Add a task</button>
+          <div><p class="eyebrow">YOUR CHECKLIST</p><h2 id="taskHeading">Today's tasks <span class="heading-flower">✿</span></h2><p class="section-description" id="taskDescription">Chọn một việc để bắt đầu đếm giờ.</p></div>
+          <button class="primary-btn" id="openAdd">＋ Add task</button>
         </div>
         <div class="filters" id="filters">
-          <button class="filter active" data-filter="all">All tasks <span id="allFilterCount">0</span></button>
+          <button class="filter active" data-filter="all">All <span id="allFilterCount">0</span></button>
           <button class="filter" data-filter="active">To do</button>
           <button class="filter" data-filter="done">Completed</button>
         </div>
         <div id="taskList" class="task-list"></div>
         <div class="empty-state" id="emptyState">
           <div class="empty-illustration">☘</div>
-          <h3>Ngày mới, trang giấy mới!</h3>
-          <p>Thêm task đầu tiên và bắt đầu routine của bạn.</p>
+          <h3>Chưa có task nào</h3>
+          <p>Thêm việc đầu tiên để tạo checklist hằng ngày của bạn.</p>
           <button class="soft-btn" id="emptyAdd">＋ Create your first task</button>
         </div>
-      </div>
+        <div class="history-readonly" id="historyReadonly" hidden>Đây là dữ liệu lịch sử. Chuyển về hôm nay để chỉnh sửa task.</div>
+      </section>
 
-      <aside class="timer-panel">
-        <div class="timer-top"><p class="eyebrow">A LITTLE FOCUS</p><span class="live-dot">● READY</span></div>
+      <aside class="timer-panel panel">
+        <div class="timer-top"><p class="eyebrow">FOCUS TIMER</p><span class="live-dot">● READY</span></div>
         <h2 id="timerTaskName">Choose a task</h2>
-        <p class="timer-hint" id="timerHint">Chọn một task bên trái để bắt đầu tập trung.</p>
-        <div class="timer-ring" id="timerRing">
-          <svg viewBox="0 0 220 220" aria-hidden="true">
-            <circle class="ring-bg" cx="110" cy="110" r="96"></circle>
-            <circle class="ring-progress" id="ringProgress" cx="110" cy="110" r="96"></circle>
-          </svg>
+        <p class="timer-hint" id="timerHint">Chọn một task bên trái để bắt đầu.</p>
+        <div class="timer-ring">
+          <svg viewBox="0 0 220 220" aria-hidden="true"><circle class="ring-bg" cx="110" cy="110" r="96"></circle><circle class="ring-progress" id="ringProgress" cx="110" cy="110" r="96"></circle></svg>
           <div class="timer-readout"><strong id="timerDisplay">00:00</strong><span id="timerStatus">READY WHEN YOU ARE</span></div>
         </div>
-        <div class="timer-actions">
-          <button class="timer-main" id="startPauseBtn" disabled>▶ Start</button>
-          <button class="timer-reset" id="resetTimerBtn" disabled title="Đặt lại">↺</button>
-        </div>
-        <p class="timer-footnote">Hết giờ, task sẽ tự động được đánh dấu hoàn thành.</p>
+        <div class="timer-actions"><button class="timer-main" id="startPauseBtn" disabled>▶ Start</button><button class="timer-reset" id="resetTimerBtn" disabled title="Đặt lại timer">↺</button></div>
+        <p class="timer-footnote">Khi hết giờ, task sẽ tự động được đánh dấu hoàn thành.</p>
         <div class="timer-tip"><span>✧</span><p>Không cần hoàn hảo. Chỉ cần bắt đầu.</p></div>
       </aside>
     </section>
 
-    <footer>made with <span>♥</span> and a little mint · Your data stays on this device</footer>
+    <section class="history-panel panel">
+      <div class="section-heading history-heading">
+        <div><p class="eyebrow">LOOK BACK, FEEL PROUD</p><h2>Daily history <span class="heading-flower">✿</span></h2><p class="section-description">Lịch sử được lưu riêng theo từng ngày trên thiết bị này.</p></div>
+        <div class="month-controls"><button class="month-btn" id="prevMonth" aria-label="Tháng trước">‹</button><strong id="monthLabel"></strong><button class="month-btn" id="nextMonth" aria-label="Tháng sau">›</button></div>
+      </div>
+      <div class="history-layout">
+        <div class="calendar-wrap">
+          <div class="calendar" id="calendar"></div>
+          <div class="calendar-legend"><span><i class="legend-dot has-data"></i> Có dữ liệu</span><span><i class="legend-dot selected-dot"></i> Đang chọn</span></div>
+        </div>
+        <div class="day-detail" id="dayDetail">
+          <div class="detail-date" id="detailDate">Today</div>
+          <div class="detail-stats">
+            <div><strong id="historyDone">0/0</strong><span>Tasks done</span></div>
+            <div><strong id="historyFocus">0 min</strong><span>Focus time</span></div>
+            <div><strong id="historyRate">0%</strong><span>Completion</span></div>
+          </div>
+          <div class="detail-divider"></div>
+          <p class="detail-label">TASKS ON THIS DAY</p>
+          <div class="history-task-list" id="historyTaskList"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>made with <span>♥</span> and a little mint <span class="footer-separator">·</span> Data stays in this browser</footer>
   </main>
 
   <dialog id="taskDialog">
-    <form id="taskForm" method="dialog">
-      <div class="dialog-heading"><div><p class="eyebrow">MAKE IT HAPPEN</p><h2 id="dialogTitle">Add a little task</h2></div><button type="button" class="close-btn" id="closeDialog">×</button></div>
-      <label for="taskName">Task name</label>
-      <input id="taskName" name="taskName" maxlength="100" placeholder="e.g. Brush my teeth" required>
-      <div class="form-row">
-        <div><label for="taskMinutes">Duration (minutes)</label><input id="taskMinutes" name="taskMinutes" type="number" min="1" max="1440" value="5" required></div>
-        <div><label for="taskCategory">Category</label><select id="taskCategory" name="taskCategory"><option>Morning</option><option>Afternoon</option><option>Evening</option><option>Study</option><option>Personal</option><option>Other</option></select></div>
-      </div>
+    <form id="taskForm">
+      <div class="dialog-heading"><div><p class="eyebrow">MAKE IT HAPPEN</p><h2 id="dialogTitle">Add a task</h2></div><button type="button" class="close-btn" id="closeDialog">×</button></div>
+      <label for="taskName">Task name</label><input id="taskName" maxlength="100" placeholder="e.g. Brush my teeth" required>
+      <div class="form-row"><div><label for="taskMinutes">Duration (minutes)</label><input id="taskMinutes" type="number" min="1" max="1440" value="5" required></div><div><label for="taskCategory">Category</label><select id="taskCategory"><option>Morning</option><option>Afternoon</option><option>Evening</option><option>Study</option><option>Personal</option><option>Other</option></select></div></div>
       <div class="dialog-actions"><button type="button" class="soft-btn" id="cancelDialog">Cancel</button><button class="primary-btn" type="submit">Save task</button></div>
     </form>
   </dialog>
